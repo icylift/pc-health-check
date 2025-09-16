@@ -108,6 +108,16 @@ def print_report():
   for k, v in get_cpu_info().items():
       print(f"{k}: {v}")
 
+  print("\n[GPU Info]")
+  gpu_info = get_gpu_info()
+  if gpu_info:
+     for gpu_id, stats in gpu_info.items():
+        print(f"\nGPU ID: {gpu_id}")
+        for k, v in stats.item():
+           print(f" {k}: {v}")
+  else:
+     print("No GPU detected")
+
   print("\n[Memory Info]")
   for k, v in get_memory_info().items():
       print(f"{k}: {v}")
