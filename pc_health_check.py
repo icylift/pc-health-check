@@ -3,6 +3,8 @@ import platform
 import socket
 from datetime import datetime
 import os
+import GPUtil
+
 
 
 # Get system info
@@ -58,6 +60,24 @@ def get_disk_info():
       "Percentage": f"{usage.percent} %"
     }
   return usage_data
+
+# Get GPU info
+def get_gpu_info():
+   gpus = GPUtil.getGPUs()
+   gpu_data = {}
+   for gpu in gpus:
+      gpu_data[gpu.id] = {
+         "Name": gpu.name,
+         "Driver Version": gpu.driver,
+         "Load (%)": f"{gpu.load * 100:.2f}",
+         "Memory Total": f"{gpu.memoryTotal} MB",
+         "Memory Used": f"{gpu.memoryUsed} MB",
+         "Memory Free": f"{gpu.memoryFree} MB",
+         "Temperature (°C)": gpu.temperature
+      }
+   return gpu_data
+
+  
 
   # Network info
 def get_network_info():
