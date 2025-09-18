@@ -96,7 +96,34 @@ def get_uptime():
     "Boot Time": boot_time.strftime("%Y-%m-%d %H:%M:%S"),
     "Uptime (hrs)": round((datetime.now() - boot_time).total_seconds() / 3600, 2)
   }
+
+
+  # Get battery info
+def get_battery_info():
+   battery = psutil.sensors_battery()
+   if battery is None:
+      return{"Battery": "No battery detected"}
+   
+   # Convert seconds to hours:minutes 
+   if battery.secsleft == psutil.POWER_TIME_UNLIMITED:
+      time_left = "Charging(time not available)"
+   elif battery.secsleft == psutil.POWER_TIME_UNKNOWN:
+      time_left = "Uknown"
+   else:
+      hours, remainder = divmod(battery.secsleft, 3600)
+      minutes, _ = divmod(remainder, 60)
+      time_left = f"{hours}h {minutes}m"
+   
+   return {
+      "Battery Percantage": f"{battery.percent} %",
+      "Power plugged": "Yes" if battery.pwer_plugged else "No",
+      "Time Left": time_left
+   }
   
+
+
+
+
   # Disply / Print
 def print_report():
   print("="*40, "PC Health Check Report", "="*40)
@@ -135,6 +162,10 @@ def print_report():
   print("\n[Uptime Info]")
   for k, v in get_uptime().items():
       print(f"{k}: {v}")
+  
+  print("\n[Battery Info]")
+  for k, v in get_battery_info().items():
+     print(f"{k}: {v}")
 
   print("="*100)
 
