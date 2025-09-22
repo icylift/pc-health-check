@@ -123,52 +123,72 @@ def get_battery_info():
 
 
 
+def generate_report():
+  lines = []
+  lines.append("="*40 + " PC Health Check Report" + "="*40)
 
-  # Disply / Print
-def print_report():
-  print("="*40, "PC Health Check Report", "="*40)
-  print("\n[System Info]")
+  lines.append("\n[System Info]")
   for k, v in get_system_info().items():
-      print(f"{k}: {v}")
+      lines.append(f"{k}: {v}")
 
-  print("\n[CPU Info]")
+  lines.append("\n[CPU Info]")
   for k, v in get_cpu_info().items():
-      print(f"{k}: {v}")
+      lines.append(f"{k}: {v}")
 
-  print("\n[GPU Info]")
-  gpu_info = get_gpu_info()
-  if gpu_info:
-     for gpu_id, stats in gpu_info.items():
-        print(f"\nGPU ID: {gpu_id}")
-        for k, v in stats.item():
-           print(f" {k}: {v}")
-  else:
-     print("No GPU detected")
-
-  print("\n[Memory Info]")
+  lines.append("\n[Memory Info]")
   for k, v in get_memory_info().items():
-      print(f"{k}: {v}")
+      lines.append(f"{k}: {v}")
 
-  print("\n[Disk Info]")
+  lines.append("\n[Disk Info]")
   for device, stats in get_disk_info().items():
-      print(f"\nDevice: {device}")
-      for k, v in stats.items():
-          print(f"  {k}: {v}")
+        lines.append(f"\nDevice: {device}")
+        for k, v in stats.items():
+            lines.append(f"  {k}: {v}")
 
-  print("\n[Network Info]")
+  lines.append("\n[Network Info]")
   for k, v in get_network_info().items():
-      print(f"{k}: {v}")
+        lines.append(f"{k}: {v}")
 
-  print("\n[Uptime Info]")
+  lines.append("\n[Uptime Info]")
   for k, v in get_uptime().items():
-      print(f"{k}: {v}")
-  
-  print("\n[Battery Info]")
-  for k, v in get_battery_info().items():
-     print(f"{k}: {v}")
+        lines.append(f"{k}: {v}")
 
-  print("="*100)
+  lines.append("\n[Uptime Info]")
+  for k, v in get_uptime().items():
+      lines.append(f"{k}: {v}")
+  
+  lines.append("\n[Battery Info]")
+  for k, v in get_battery_info().items():
+     lines.append(f"{k}: {v}")  
+
+  lines.append("="*100)
+
+  return "\n".join(lines)
+
+def save_report(report_text):
+   
+   #Make a "reports" folder if it doesnt exist
+  os.makedirs("reports", exist_ok=True)
+
+  #create a file with current date and time
+  timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+  filename = f"reports/health_report_{timestamp}.txt"
+
+  # Save the report
+  with open(filename, "w") as f:
+     f.write(report_text)
+
+  print(f"Report saved to: {filename}")
 
 if __name__ == "__main__":
-    print_report()
+    report_text = generate_report()
+    print(report_text)
+    save_report(report_text)
+
+
+
+
+
+
+
 
