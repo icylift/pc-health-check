@@ -4,9 +4,11 @@ import socket
 from datetime import datetime
 import os
 import GPUtil
+import argparse
+import json
 
 
-
+# --------------------------------------------------------------------------------------- Data Collection Functions --------------------------------------------------------------------------------------------------------------
 # Get system info
 def get_system_info():
   uname = platform.uname()
@@ -120,6 +122,18 @@ def get_battery_info():
       "Time Left": time_left
    }
   
+# ------------------------------------------------------------------------------------------ Reporting & Format helpers --------------------------------------------------------------------------------------
+
+
+def parse_args():
+   parser = argparse.ArgumentsParser(description="PC Health Checker")
+   parser.add_argument(
+      "--format",
+      choices=["text", "json", "csv"],
+      default="text",
+      help="Choose the output format (text, json, csv). Default is text."
+   )
+   return parser.parse.args()
 
 
 
@@ -164,6 +178,21 @@ def generate_report():
   lines.append("="*100)
 
   return "\n".join(lines)
+
+def generate_json_report():
+   report = {
+      "System": get_system_info(),
+      "Cpu": get_cpu_info(),
+      "Memory": get_memory_info(),
+      "Disk": get_disk_info(),
+      "GPU": get_gpu_info(),
+      "Network": get_network_info(),
+      "Uptime": get_uptime(),
+      "Battery": get_battery_info()
+   }
+   return json.dumps(report, indent=4) # this indent 4 is for better formatting
+
+# ---------------------------------------------------------------------------------------- File Saving --------------------------------------------------------------------------------------------
 
 def save_report(report_text):
    
