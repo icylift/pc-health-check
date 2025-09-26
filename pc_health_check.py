@@ -192,6 +192,23 @@ def generate_json_report():
    }
    return json.dumps(report, indent=4) # this indent 4 is for better formatting
 
+def save_csv_report(report, filename):
+   
+   with open(filename, "w", newline="") as csvfile:
+      writer = csv.writer(csvfile)
+      writer.writerow(["Category", "Key", "Value"]) #header
+    
+      for category, data in report.items():
+        if isinstance(data, dict):
+          for k, v in data.items():
+            writer.writerow([category, k, v])
+        elif isinstance(data, list):
+          for idx, item in enumerate(data):
+              for k, v in item.items():
+                writer.writerow([f"{category} {idx}", k, v])
+        else:
+          writer.writerow([category, "", data])
+
 # ---------------------------------------------------------------------------------------- File Saving --------------------------------------------------------------------------------------------
 
 def save_report(report_text):
