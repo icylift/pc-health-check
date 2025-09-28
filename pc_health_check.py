@@ -227,9 +227,38 @@ def save_report(report_text):
   print(f"Report saved to: {filename}")
 
 if __name__ == "__main__":
+    args = parse_args()
+
+    # Collect the report as a dict(To be used for JSON/CSV)
+    report = {
+       "System": get_system_info(),
+       "Cpu": get_cpu_info(),
+       "Memory": get_memory_info(),
+       "Disk": get_disk_info(),
+       "GPU": get_gpu_info(),
+       "Network": get_network_info(),
+       "Uptime": get_uptime(),
+       "Battery": get_battery_info()
+    }
+
+if args.format == "text":
     report_text = generate_report()
     print(report_text)
-    save_report(report_text)
+    save_report(report_text)    
+
+elif args.format == "json":
+   report_json = json.dumps(report, indent=4)
+   print(report_json)
+   save_report(report_json, extension="json")
+
+elif args.format == "csv":
+   os.makedirs("reports", exist_ok=True)
+   timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+   filename = f"reports/health_report_{timestamp}.csv"
+   save_csv_report(report, filename)
+   print(f"CSV report saved to: {filename}")
+
+
 
 
 
